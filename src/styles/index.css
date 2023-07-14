@@ -1,68 +1,77 @@
-body {
-  background-color: #5c5753;
-  margin: 20px;
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
 }
 
 h1 {
-  color: white;
-  padding-top: 50px;
+  font-size: 24px;
+  margin-bottom: 20px;
 }
 
-.board-row:after {
-  clear: both;
-  content: "";
-  text-align: center;
-  display: table;
+.game {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
 }
 
-.square {
-  border: 2px solid #827a74;
-  border-collapse: collapse;
-  background-color: #5c5753;
-  float: left;
-  font-weight: bold;
-  color: #827a74;
-  font-size: 50px;
-  height: 100px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  width: 100px;
+.board {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
 }
 
-button:hover {
+.player-board {
+  margin-right: 100px;
+}
+
+h3 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+.cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid black;
   cursor: pointer;
 }
 
-.status,
-.restart {
+.ship {
+  background-color: navy;
+}
+
+.hit {
+  background-color: red;
+}
+
+.miss {
+  background-color: blue;
+}
+
+.start-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #4caf50;
   color: white;
-  margin-top: 10px;
+  border: none;
+  cursor: pointer;
 }
 
-/** button styles **/
-.restart {
-  padding: 10px 15px;
-  color: black;
-  background-color: #fff;
-  border-color: black;
-  border-radius: 8px;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
-    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+.cell.ship-2 {
+  background-color: red; /* Estilo para el barco Battleship */
 }
 
-.restart:active {
-  color: black;
-  background-color: white;
-  border-color: black;
+.cell.ship-3 {
+  background-color: green; /* Estilo para el barco Cruiser y Submarine */
 }
 
-.restart:hover {
-  color: black;
-  background-color: white;
-  border-color: black;
+.cell.ship-4 {
+  background-color: blue; /* Estilo para el barco Battleship */
 }
 
-.restart:focus {
-  box-shadow: 0 0 0 0.2rem black;
+.cell.ship-5 {
+  background-color: orange; /* Estilo para el barco Carrier */
 }
