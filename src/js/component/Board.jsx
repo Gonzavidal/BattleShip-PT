@@ -137,7 +137,6 @@ const App = () => {
 
     const updatedComputerBoard = state.computerBoard.map((row) => [...row]);
     updatedComputerBoard[row][col] = updatedPlayerBoard[row][col];
-
     setState((prevState) => ({
       ...prevState,
       computerBoard: updatedComputerBoard
@@ -184,6 +183,19 @@ const App = () => {
           <h3>Player</h3>
           <div className="board">
             {state.playerBoard.map((row, rowIndex) =>
+              row.map((cell, colIndex) => (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`cell ${cell === 1 ? "ship" : ""}`}
+                />
+              ))
+            )}
+          </div>
+        </div>
+        <div className="computer-board">
+          <h3>CPU</h3>
+          <div className="board">
+            {state.computerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
                 let cellClass = "";
                 if (cell === 2) {
@@ -198,30 +210,6 @@ const App = () => {
                     key={`${rowIndex}-${colIndex}`}
                     className={`cell ${cellClass}`}
                     onClick={() => handleCellClick(rowIndex, colIndex)}
-                  />
-                );
-              })
-            )}
-          </div>
-        </div>
-        <div className="computer-board">
-          <h3>CPU</h3>
-          <div className="board">
-            {state.computerBoard.map((row, rowIndex) =>
-              row.map((cell, colIndex) => {
-                let cellClass = "";
-                if (cell === 2) {
-                  cellClass = "hit";
-                }
-                return (
-                  <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className={`cell ${cellClass}`}
-                    onClick={
-                      state.isPlayerTurn
-                        ? () => handleMove(rowIndex, colIndex, state.playerBoard)
-                        : undefined
-                    }
                   />
                 );
               })
