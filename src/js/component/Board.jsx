@@ -114,20 +114,25 @@ const App = () => {
 
     const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
 
-    let randomRow, randomCol;
+    let row = -1, col = -1;
     let isMoveValid = false;
 
-    while (!isMoveValid) {
-      randomRow = Math.floor(Math.random() * BOARD_SIZE);
-      randomCol = Math.floor(Math.random() * BOARD_SIZE);
-
-      if (updatedPlayerBoard[randomRow][randomCol] === null) {
-        isMoveValid = true;
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      for (let j = 0; j < BOARD_SIZE; j++) {
+        if (updatedPlayerBoard[i][j] === 1) {
+          row = i;
+          col = j;
+          isMoveValid = true;
+          break;
+        }
+      }
+      if (isMoveValid) {
+        break;
       }
     }
 
-    if (updatedPlayerBoard[randomRow][randomCol] === 1) {
-      updatedPlayerBoard[randomRow][randomCol] = 2;
+    if (row !== -1 && col !== -1) {
+      updatedPlayerBoard[row][col] = 2;
 
       const isGameOver = updatedPlayerBoard.every((ship) =>
         ship.every((cell) => cell === 2)
@@ -141,18 +146,17 @@ const App = () => {
         isPlayerTurn: !prevState.isPlayerTurn
       }));
     } else {
-      updatedPlayerBoard[randomRow][randomCol] = 3;
-
+      // No se encontraron barcos en el tablero del jugador, la computadora ha ganado
       setState((prevState) => ({
         ...prevState,
-        playerBoard: updatedPlayerBoard,
-        isPlayerTurn: !prevState.isPlayerTurn
+        isGameOver: true,
+        winner: "Computer"
       }));
     }
 
     // Mostrar movimiento de la computadora
     const updatedComputerBoard = state.computerBoard.map((row) => [...row]);
-    updatedComputerBoard[randomRow][randomCol] = updatedPlayerBoard[randomRow][randomCol];
+    updatedComputerBoard[row][col] = updatedPlayerBoard[row][col];
     setState((prevState) => ({
       ...prevState,
       computerBoard: updatedComputerBoard
