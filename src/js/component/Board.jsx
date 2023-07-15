@@ -29,45 +29,26 @@ const App = () => {
   const placeShipsRandomly = (board) => {
     const updatedBoard = board.map((row) => [...row]);
 
-    shipTypes.forEach((shipType) => {
-      let isShipPlaced = false;
-      while (!isShipPlaced) {
-        const isVertical = Math.random() >= 0.5;
-        const { size } = shipType;
-        const ship = Array.from({ length: size }, () => 1);
+    shipTypes.forEach((shipType, index) => {
+      const { size } = shipType;
+      const ship = Array.from({ length: size }, () => 1);
 
-        let randomRow = Math.floor(Math.random() * BOARD_SIZE);
-        let randomCol = Math.floor(Math.random() * BOARD_SIZE);
+      const isVertical = index % 2 === 0;
+      let startRow, startCol;
 
-        if (
-          (isVertical && randomRow + size <= BOARD_SIZE) ||
-          (!isVertical && randomCol + size <= BOARD_SIZE)
-        ) {
-          let isCollision = false;
-          for (let i = 0; i < size; i++) {
-            if (isVertical && updatedBoard[randomRow + i][randomCol] !== null) {
-              isCollision = true;
-              break;
-            }
-            if (
-              !isVertical &&
-              updatedBoard[randomRow][randomCol + i] !== null
-            ) {
-              isCollision = true;
-              break;
-            }
-          }
+      if (isVertical) {
+        startRow = Math.floor(Math.random() * (BOARD_SIZE - size + 1));
+        startCol = Math.floor(Math.random() * BOARD_SIZE);
+      } else {
+        startRow = Math.floor(Math.random() * BOARD_SIZE);
+        startCol = Math.floor(Math.random() * (BOARD_SIZE - size + 1));
+      }
 
-          if (!isCollision) {
-            for (let i = 0; i < size; i++) {
-              if (isVertical) {
-                updatedBoard[randomRow + i][randomCol] = ship[i];
-              } else {
-                updatedBoard[randomRow][randomCol + i] = ship[i];
-              }
-            }
-            isShipPlaced = true;
-          }
+      for (let i = 0; i < size; i++) {
+        if (isVertical) {
+          updatedBoard[startRow + i][startCol] = ship[i];
+        } else {
+          updatedBoard[startRow][startCol + i] = ship[i];
         }
       }
     });
@@ -146,7 +127,6 @@ const App = () => {
         isPlayerTurn: !prevState.isPlayerTurn
       }));
     } else {
-      // No se encontraron barcos en el tablero del jugador, la computadora ha ganado
       setState((prevState) => ({
         ...prevState,
         isGameOver: true,
@@ -154,7 +134,6 @@ const App = () => {
       }));
     }
 
-    // Mostrar movimiento de la computadora
     const updatedComputerBoard = state.computerBoard.map((row) => [...row]);
     updatedComputerBoard[row][col] = updatedPlayerBoard[row][col];
     setState((prevState) => ({
@@ -196,7 +175,7 @@ const App = () => {
       )}
       <div className="game">
         <div className="player-board">
-          <h3>Your Board</h3>
+          <h3>Player</h3>
           <div className="board">
             {state.playerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => (
@@ -209,7 +188,7 @@ const App = () => {
           </div>
         </div>
         <div className="computer-board">
-          <h3>Computer's Board</h3>
+          <h3>CPU</h3>
           <div className="board">
             {state.computerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
