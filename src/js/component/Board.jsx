@@ -12,7 +12,7 @@ const initialState = {
   ),
   isGameOver: false,
   winner: null,
-  isPlayerTurn: false
+  isPlayerTurn: true
 };
 
 const shipTypes = [
@@ -104,12 +104,6 @@ const App = () => {
         computerBoard: updatedBoard,
         isPlayerTurn: !prevState.isPlayerTurn
       }));
-
-      if (!prevState.isPlayerTurn) {
-        setTimeout(() => {
-          handleComputerMove();
-        }, 1000);
-      }
     }
   };
 
@@ -155,26 +149,34 @@ const App = () => {
         isPlayerTurn: !prevState.isPlayerTurn
       }));
     }
+
+    // Mostrar movimiento de la computadora
+    const updatedComputerBoard = state.computerBoard.map((row) => [...row]);
+    updatedComputerBoard[randomRow][randomCol] = updatedPlayerBoard[randomRow][randomCol];
+    setState((prevState) => ({
+      ...prevState,
+      computerBoard: updatedComputerBoard
+    }));
   };
 
   useEffect(() => {
     setState((prevState) => ({
       ...prevState,
-      playerBoard: placeShipsRandomly(prevState.playerBoard)
+      playerBoard: placeShipsRandomly(prevState.playerBoard),
+      computerBoard: placeShipsRandomly(prevState.computerBoard)
     }));
   }, []);
 
-  const startGame = () => {
-    const computerBoard = placeShipsRandomly(state.computerBoard);
-    setState((prevState) => ({
-      ...prevState,
-      computerBoard,
-      isPlayerTurn: true
-    }));
-  };
+  useEffect(() => {
+    if (!state.isPlayerTurn) {
+      setTimeout(() => {
+        handleComputerMove();
+      }, 1000);
+    }
+  }, [state.isPlayerTurn]);
 
   const handleCellClick = (row, col) => {
-    if (state.isPlayerTurn) {
+    if (state.isPlayerTurn && state.computerBoard[row][col] !== 2 && state.computerBoard[row][col] !== 3) {
       handleMove(row, col, state.computerBoard);
     }
   };
@@ -212,6 +214,8 @@ const App = () => {
                   cellClass = "hit";
                 } else if (cell === 3) {
                   cellClass = "miss";
+                } else if (cell === 1) {
+                  cellClass = "ship";
                 }
                 return (
                   <div
@@ -225,11 +229,6 @@ const App = () => {
           </div>
         </div>
       </div>
-      {!state.isGameOver && !state.isPlayerTurn && (
-        <button className="start-button" onClick={startGame}>
-          Start Game
-        </button>
-      )}
     </div>
   );
 };

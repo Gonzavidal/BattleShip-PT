@@ -39,7 +39,7 @@ h3 {
 }
 
 .ship {
-  background-color: navy;
+  background-color: darkgrey;
 }
 
 .hit {
@@ -74,4 +74,8 @@ h3 {
 
 .cell.ship-5 {
   background-color: orange; /* Estilo para el barco Carrier */
+}
+
+.clicked {
+  opacity: 0.5;
 }
