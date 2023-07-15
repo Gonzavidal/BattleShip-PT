@@ -95,7 +95,8 @@ const App = () => {
 
     const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
 
-    let row = -1, col = -1;
+    let row = -1,
+      col = -1;
     let isMoveValid = false;
 
     for (let i = 0; i < BOARD_SIZE; i++) {
@@ -136,6 +137,7 @@ const App = () => {
 
     const updatedComputerBoard = state.computerBoard.map((row) => [...row]);
     updatedComputerBoard[row][col] = updatedPlayerBoard[row][col];
+
     setState((prevState) => ({
       ...prevState,
       computerBoard: updatedComputerBoard
@@ -159,7 +161,11 @@ const App = () => {
   }, [state.isPlayerTurn]);
 
   const handleCellClick = (row, col) => {
-    if (state.isPlayerTurn && state.computerBoard[row][col] !== 2 && state.computerBoard[row][col] !== 3) {
+    if (
+      state.isPlayerTurn &&
+      state.computerBoard[row][col] !== 2 &&
+      state.computerBoard[row][col] !== 3
+    ) {
       handleMove(row, col, state.computerBoard);
     }
   };
@@ -178,19 +184,6 @@ const App = () => {
           <h3>Player</h3>
           <div className="board">
             {state.playerBoard.map((row, rowIndex) =>
-              row.map((cell, colIndex) => (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`cell ${cell === 1 ? "ship" : ""}`}
-                />
-              ))
-            )}
-          </div>
-        </div>
-        <div className="computer-board">
-          <h3>CPU</h3>
-          <div className="board">
-            {state.computerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
                 let cellClass = "";
                 if (cell === 2) {
@@ -205,6 +198,30 @@ const App = () => {
                     key={`${rowIndex}-${colIndex}`}
                     className={`cell ${cellClass}`}
                     onClick={() => handleCellClick(rowIndex, colIndex)}
+                  />
+                );
+              })
+            )}
+          </div>
+        </div>
+        <div className="computer-board">
+          <h3>CPU</h3>
+          <div className="board">
+            {state.computerBoard.map((row, rowIndex) =>
+              row.map((cell, colIndex) => {
+                let cellClass = "";
+                if (cell === 2) {
+                  cellClass = "hit";
+                }
+                return (
+                  <div
+                    key={`${rowIndex}-${colIndex}`}
+                    className={`cell ${cellClass}`}
+                    onClick={
+                      state.isPlayerTurn
+                        ? () => handleMove(rowIndex, colIndex, state.playerBoard)
+                        : undefined
+                    }
                   />
                 );
               })
