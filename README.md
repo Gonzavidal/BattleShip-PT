@@ -1,4 +1,4 @@
-Battleship, proyecto de prueba técnica realizado en React.js 
+Battleship, proyecto de prueba técnica realizado en React.js con tecnologías de Javascript, HTML y CSS.
 
 Instrucciones:
 

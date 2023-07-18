@@ -23,32 +23,41 @@ const shipTypes = [
   { name: "Destroyer", size: 2 }
 ];
 
+const getRandomPosition = () => Math.floor(Math.random() * BOARD_SIZE);
+
 const App = () => {
   const [state, setState] = useState(initialState);
 
   const placeShipsRandomly = (board) => {
     const updatedBoard = board.map((row) => [...row]);
 
-    shipTypes.forEach((shipType, index) => {
-      const { size } = shipType;
-      const ship = Array.from({ length: size }, () => 1);
+    shipTypes.forEach((shipType) => {
+      const { name, size } = shipType;
+      const ship = Array.from({ length: size }, () => ({ hit: false, name }));
 
-      const isVertical = index % 2 === 0;
-      let startRow, startCol;
+      let isPlacementValid = false;
+      while (!isPlacementValid) {
+        const isVertical = Math.random() < 0.5;
+        const startRow = getRandomPosition();
+        const startCol = getRandomPosition();
 
-      if (isVertical) {
-        startRow = Math.floor(Math.random() * (BOARD_SIZE - size + 1));
-        startCol = Math.floor(Math.random() * BOARD_SIZE);
-      } else {
-        startRow = Math.floor(Math.random() * BOARD_SIZE);
-        startCol = Math.floor(Math.random() * (BOARD_SIZE - size + 1));
-      }
+        let isValid = true;
+        for (let i = 0; i < size; i++) {
+          const row = isVertical ? startRow + i : startRow;
+          const col = isVertical ? startCol : startCol + i;
+          if (row >= BOARD_SIZE || col >= BOARD_SIZE || updatedBoard[row][col] !== null) {
+            isValid = false;
+            break;
+          }
+        }
 
-      for (let i = 0; i < size; i++) {
-        if (isVertical) {
-          updatedBoard[startRow + i][startCol] = ship[i];
-        } else {
-          updatedBoard[startRow][startCol + i] = ship[i];
+        if (isValid) {
+          for (let i = 0; i < size; i++) {
+            const row = isVertical ? startRow + i : startRow;
+            const col = isVertical ? startCol : startCol + i;
+            updatedBoard[row][col] = ship[i];
+          }
+          isPlacementValid = true;
         }
       }
     });
@@ -57,17 +66,18 @@ const App = () => {
   };
 
   const handleMove = (row, col, board) => {
-    if (state.isGameOver || board[row][col] !== null) {
+    if (state.isGameOver || board[row][col] === null || board[row][col].hit) {
       return;
     }
 
     const updatedBoard = board.map((row) => [...row]);
+    const cell = updatedBoard[row][col];
 
-    if (updatedBoard[row][col] === 1) {
-      updatedBoard[row][col] = 2;
+    if (cell !== null) {
+      cell.hit = true;
 
-      const isGameOver = board.every((ship) =>
-        ship.every((cell) => cell === 2)
+      const isGameOver = updatedBoard.every((row) =>
+        row.every((cell) => cell === null || cell.hit)
       );
 
       setState((prevState) => ({
@@ -75,14 +85,6 @@ const App = () => {
         computerBoard: updatedBoard,
         isGameOver,
         winner: isGameOver ? "Player" : null,
-        isPlayerTurn: !prevState.isPlayerTurn
-      }));
-    } else {
-      updatedBoard[row][col] = 3;
-
-      setState((prevState) => ({
-        ...prevState,
-        computerBoard: updatedBoard,
         isPlayerTurn: !prevState.isPlayerTurn
       }));
     }
@@ -95,45 +97,30 @@ const App = () => {
 
     const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
 
-    let row = -1,
-      col = -1;
+    let row, col;
     let isMoveValid = false;
 
-    for (let i = 0; i < BOARD_SIZE; i++) {
-      for (let j = 0; j < BOARD_SIZE; j++) {
-        if (updatedPlayerBoard[i][j] === 1) {
-          row = i;
-          col = j;
-          isMoveValid = true;
-          break;
-        }
-      }
-      if (isMoveValid) {
-        break;
+    while (!isMoveValid) {
+      row = getRandomPosition();
+      col = getRandomPosition();
+      if (updatedPlayerBoard[row][col] !== null && !updatedPlayerBoard[row][col].hit) {
+        isMoveValid = true;
       }
     }
 
-    if (row !== -1 && col !== -1) {
-      updatedPlayerBoard[row][col] = 2;
+    updatedPlayerBoard[row][col].hit = true;
 
-      const isGameOver = updatedPlayerBoard.every((ship) =>
-        ship.every((cell) => cell === 2)
-      );
+    const isGameOver = updatedPlayerBoard.every((row) =>
+      row.every((cell) => cell === null || cell.hit)
+    );
 
-      setState((prevState) => ({
-        ...prevState,
-        playerBoard: updatedPlayerBoard,
-        isGameOver,
-        winner: isGameOver ? "Computer" : null,
-        isPlayerTurn: !prevState.isPlayerTurn
-      }));
-    } else {
-      setState((prevState) => ({
-        ...prevState,
-        isGameOver: true,
-        winner: "Computer"
-      }));
-    }
+    setState((prevState) => ({
+      ...prevState,
+      playerBoard: updatedPlayerBoard,
+      isGameOver,
+      winner: isGameOver ? "Computer" : null,
+      isPlayerTurn: !prevState.isPlayerTurn
+    }));
 
     const updatedComputerBoard = state.computerBoard.map((row) => [...row]);
     updatedComputerBoard[row][col] = updatedPlayerBoard[row][col];
@@ -153,17 +140,19 @@ const App = () => {
 
   useEffect(() => {
     if (!state.isPlayerTurn) {
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         handleComputerMove();
       }, 1000);
+
+      return () => clearTimeout(timer);
     }
   }, [state.isPlayerTurn]);
 
   const handleCellClick = (row, col) => {
     if (
       state.isPlayerTurn &&
-      state.computerBoard[row][col] !== 2 &&
-      state.computerBoard[row][col] !== 3
+      state.computerBoard[row][col] !== null &&
+      !state.computerBoard[row][col].hit
     ) {
       handleMove(row, col, state.computerBoard);
     }
@@ -183,12 +172,23 @@ const App = () => {
           <h3>Player</h3>
           <div className="board">
             {state.playerBoard.map((row, rowIndex) =>
-              row.map((cell, colIndex) => (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`cell ${cell === 1 ? "ship" : ""}`}
-                />
-              ))
+              row.map((cell, colIndex) => {
+                let cellClass = "";
+                if (cell !== null) {
+                  if (cell.hit) {
+                    cellClass = "hit";
+                  } else {
+                    cellClass = "ship";
+                  }
+                }
+                return (
+                  <div
+                    key={`${rowIndex}-${colIndex}`}
+                    className={`cell ${cellClass}`}
+                    onClick={() => handleCellClick(rowIndex, colIndex)}
+                  />
+                );
+              })
             )}
           </div>
         </div>
@@ -198,12 +198,12 @@ const App = () => {
             {state.computerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
                 let cellClass = "";
-                if (cell === 2) {
-                  cellClass = "hit";
-                } else if (cell === 3) {
-                  cellClass = "miss";
-                } else if (cell === 1) {
-                  cellClass = "ship";
+                if (cell !== null) {
+                  if (cell.hit) {
+                    cellClass = "hit";
+                  } else {
+                    cellClass = "ship";
+                  }
                 }
                 return (
                   <div
