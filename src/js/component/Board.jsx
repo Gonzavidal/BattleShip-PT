@@ -66,7 +66,7 @@ const App = () => {
   };
 
   const handleMove = (row, col, board) => {
-    if (state.isGameOver || board[row][col] === null || board[row][col].hit) {
+    if (state.isGameOver || board[row][col].hit) {
       return;
     }
 
@@ -91,44 +91,38 @@ const App = () => {
   };
 
   const handleComputerMove = () => {
-    if (state.isGameOver) {
-      return;
+  if (state.isGameOver) {
+    return;
+  }
+
+  const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
+
+  let row, col;
+  let isMoveValid = false;
+
+  while (!isMoveValid) {
+    row = getRandomPosition();
+    col = getRandomPosition();
+    if (updatedPlayerBoard[row][col] !== null && !updatedPlayerBoard[row][col].hit) {
+      isMoveValid = true;
     }
+  }
 
-    const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
+  updatedPlayerBoard[row][col].hit = true;
 
-    let row, col;
-    let isMoveValid = false;
+  const isGameOver = updatedPlayerBoard.every((row) =>
+    row.every((cell) => cell === null || cell.hit)
+  );
 
-    while (!isMoveValid) {
-      row = getRandomPosition();
-      col = getRandomPosition();
-      if (updatedPlayerBoard[row][col] !== null && !updatedPlayerBoard[row][col].hit) {
-        isMoveValid = true;
-      }
-    }
+  setState((prevState) => ({
+    ...prevState,
+    playerBoard: updatedPlayerBoard,
+    isGameOver,
+    winner: isGameOver ? "Computer" : null,
+    isPlayerTurn: !prevState.isPlayerTurn
+  }));
+};
 
-    updatedPlayerBoard[row][col].hit = true;
-
-    const isGameOver = updatedPlayerBoard.every((row) =>
-      row.every((cell) => cell === null || cell.hit)
-    );
-
-    setState((prevState) => ({
-      ...prevState,
-      playerBoard: updatedPlayerBoard,
-      isGameOver,
-      winner: isGameOver ? "Computer" : null,
-      isPlayerTurn: !prevState.isPlayerTurn
-    }));
-
-    const updatedComputerBoard = state.computerBoard.map((row) => [...row]);
-    updatedComputerBoard[row][col] = updatedPlayerBoard[row][col];
-    setState((prevState) => ({
-      ...prevState,
-      computerBoard: updatedComputerBoard
-    }));
-  };
 
   useEffect(() => {
     setState((prevState) => ({
@@ -142,7 +136,7 @@ const App = () => {
     if (!state.isPlayerTurn) {
       const timer = setTimeout(() => {
         handleComputerMove();
-      }, 1000);
+      });
 
       return () => clearTimeout(timer);
     }
@@ -185,7 +179,6 @@ const App = () => {
                   <div
                     key={`${rowIndex}-${colIndex}`}
                     className={`cell ${cellClass}`}
-                    onClick={() => handleCellClick(rowIndex, colIndex)}
                   />
                 );
               })
