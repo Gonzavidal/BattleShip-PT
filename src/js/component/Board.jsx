@@ -91,37 +91,38 @@ const App = () => {
   };
 
   const handleComputerMove = () => {
-  if (state.isGameOver) {
-    return;
-  }
-
-  const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
-
-  let row, col;
-  let isMoveValid = false;
-
-  while (!isMoveValid) {
-    row = getRandomPosition();
-    col = getRandomPosition();
-    if (updatedPlayerBoard[row][col] !== null && !updatedPlayerBoard[row][col].hit) {
-      isMoveValid = true;
+    if (state.isGameOver) {
+      return;
     }
-  }
 
-  updatedPlayerBoard[row][col].hit = true;
+    const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
 
-  const isGameOver = updatedPlayerBoard.every((row) =>
-    row.every((cell) => cell === null || cell.hit)
-  );
+    let row, col;
+    let isMoveValid = false;
 
-  setState((prevState) => ({
-    ...prevState,
-    playerBoard: updatedPlayerBoard,
-    isGameOver,
-    winner: isGameOver ? "Computer" : null,
-    isPlayerTurn: !prevState.isPlayerTurn
-  }));
-};
+    while (!isMoveValid) {
+      row = getRandomPosition();
+      col = getRandomPosition();
+      if (updatedPlayerBoard[row][col] !== null && !updatedPlayerBoard[row][col].hit) {
+        isMoveValid = true;
+      }
+    }
+
+    updatedPlayerBoard[row][col].hit = true;
+
+    const isGameOver = updatedPlayerBoard.every((row) =>
+      row.every((cell) => cell === null || cell.hit)
+    );
+
+    setState((prevState) => ({
+      ...prevState,
+      playerBoard: updatedPlayerBoard,
+      isGameOver,
+      winner: isGameOver ? "Computer" : null,
+      isPlayerTurn: !prevState.isPlayerTurn
+    }));
+  };
+
 
 
   useEffect(() => {
