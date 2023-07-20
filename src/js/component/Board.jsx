@@ -5,10 +5,10 @@ const BOARD_SIZE = 10;
 
 const initialState = {
   playerBoard: Array.from({ length: BOARD_SIZE }, () =>
-    Array.from({ length: BOARD_SIZE }, () => "")
+    Array.from({ length: BOARD_SIZE }, () => null)
   ),
   computerBoard: Array.from({ length: BOARD_SIZE }, () =>
-    Array.from({ length: BOARD_SIZE }, () => "")
+    Array.from({ length: BOARD_SIZE }, () => null)
   ),
   selectedCells: [],
   selectedEmptyCells: [],
@@ -17,7 +17,7 @@ const initialState = {
   isPlayerTurn: true
 };
 
-const shipTypes = [ // Composición barcos
+const shipTypes = [
   { name: "Carrier", size: 5 },
   { name: "Battleship", size: 4 },
   { name: "Cruiser", size: 3 },
@@ -196,12 +196,12 @@ const App = () => {
       
       <div className="game"> 
         <div className="player-board"> 
-          <h3>Player</h3> 
+          <h3>Player</h3>
           <div className="board">
-            {state.playerBoard.map((row, rowIndex) => // Tablero player
+            {state.playerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
                 let cellClass = "";
-                        if (cell !== "") {
+                        if (cell !== null) {
                           cellClass = cell.hit ? "hit" : "ship";
                         }
                         if (
@@ -231,7 +231,7 @@ const App = () => {
         <div className="computer-board">
           <h3>CPU</h3>
           <div className="board">
-            {state.computerBoard.map((row, rowIndex) => // Tablero CPU
+            {state.computerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
                 let cellClass = "";
                 if (cell !== null) {
