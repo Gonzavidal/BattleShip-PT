@@ -53,15 +53,19 @@ h3 {
 }
 
 .clicked {
-  opacity: 0.5;
+  background-color: blue; 
 }
 
-.footer-container {
-  position: fixed;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
+.cell:hover {
+  opacity: 50%; 
+}
+
+footer {
   background-color: lightskyblue;
-  padding: 5px;
+  color: black;
+  padding: 10px;
+  text-align: center;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
 }
