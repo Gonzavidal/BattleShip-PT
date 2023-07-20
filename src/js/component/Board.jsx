@@ -10,6 +10,7 @@ const initialState = {
   computerBoard: Array.from({ length: BOARD_SIZE }, () =>
     Array.from({ length: BOARD_SIZE }, () => null)
   ),
+  selectedCells: [], 
   isGameOver: false,
   winner: null,
   isPlayerTurn: true
@@ -85,7 +86,13 @@ const App = () => {
         computerBoard: updatedBoard,
         isGameOver,
         winner: isGameOver ? "Player" : null,
-        isPlayerTurn: !prevState.isPlayerTurn
+        isPlayerTurn: false 
+      }));
+    } else {
+      const selectedCell = { row, col };
+      setState((prevState) => ({
+        ...prevState,
+        selectedCells: [...prevState.selectedCells, selectedCell]
       }));
     }
   };
@@ -119,11 +126,15 @@ const App = () => {
       playerBoard: updatedPlayerBoard,
       isGameOver,
       winner: isGameOver ? "Computer" : null,
-      isPlayerTurn: !prevState.isPlayerTurn
+      isPlayerTurn: true 
+    }));
+
+    const selectedCell = { row, col };
+    setState((prevState) => ({
+      ...prevState,
+      selectedCells: [...prevState.selectedCells, selectedCell]
     }));
   };
-
-
 
   useEffect(() => {
     setState((prevState) => ({
@@ -137,19 +148,23 @@ const App = () => {
     if (!state.isPlayerTurn) {
       const timer = setTimeout(() => {
         handleComputerMove();
-      });
+      }); 
 
       return () => clearTimeout(timer);
     }
   }, [state.isPlayerTurn]);
 
   const handleCellClick = (row, col) => {
-    if (
-      state.isPlayerTurn &&
-      state.computerBoard[row][col] !== null &&
-      !state.computerBoard[row][col].hit
-    ) {
-      handleMove(row, col, state.computerBoard);
+    if (state.isPlayerTurn) {
+      if (state.computerBoard[row][col] !== null && !state.computerBoard[row][col].hit) {
+        handleMove(row, col, state.computerBoard);
+      } else {
+        const selectedCell = { row, col };
+        setState((prevState) => ({
+          ...prevState,
+          selectedCells: [...prevState.selectedCells, selectedCell]
+        }));
+      }
     }
   };
 
@@ -175,11 +190,18 @@ const App = () => {
                   } else {
                     cellClass = "ship";
                   }
+                } else if (
+                  state.selectedCells.some(
+                    (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
+                  )
+                ) {
+                  cellClass = "miss";
                 }
                 return (
                   <div
                     key={`${rowIndex}-${colIndex}`}
                     className={`cell ${cellClass}`}
+                    onClick={() => handleCellClick(rowIndex, colIndex)}
                   />
                 );
               })
