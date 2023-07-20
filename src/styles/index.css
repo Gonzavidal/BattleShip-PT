@@ -40,42 +40,16 @@ h3 {
   cursor: pointer;
 }
 
-.ship {
+.cell.ship {
   background-color: grey;
 }
 
-.hit {
+.cell.hit {
   background-color: red;
 }
 
-.miss {
+.cell.miss {
   background-color: blue;
-}
-
-.start-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-.cell.ship-2 {
-  background-color: red; /* Estilo para el barco Battleship */
-}
-
-.cell.ship-3 {
-  background-color: green; /* Estilo para los barcos Cruiser y Submarine */
-}
-
-.cell.ship-4 {
-  background-color: blue; /* Estilo para el barco Battleship */
-}
-
-.cell.ship-5 {
-  background-color: orange; /* Estilo para el barco Carrier */
 }
 
 .clicked {

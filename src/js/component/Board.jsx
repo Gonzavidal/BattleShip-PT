@@ -92,13 +92,14 @@ const App = () => {
       const selectedCell = { row, col };
       setState((prevState) => ({
         ...prevState,
-        selectedCells: [...prevState.selectedCells, selectedCell]
+        selectedCells: [...prevState.selectedCells, selectedCell],
+        isPlayerTurn: false 
       }));
     }
   };
 
   const handleComputerMove = () => {
-    if (state.isGameOver) {
+    if (state.isGameOver || state.isPlayerTurn) {
       return;
     }
 
@@ -115,7 +116,8 @@ const App = () => {
       }
     }
 
-    updatedPlayerBoard[row][col].hit = true;
+    const cell = updatedPlayerBoard[row][col];
+    cell.hit = true;
 
     const isGameOver = updatedPlayerBoard.every((row) =>
       row.every((cell) => cell === null || cell.hit)
@@ -127,12 +129,6 @@ const App = () => {
       isGameOver,
       winner: isGameOver ? "Computer" : null,
       isPlayerTurn: true 
-    }));
-
-    const selectedCell = { row, col };
-    setState((prevState) => ({
-      ...prevState,
-      selectedCells: [...prevState.selectedCells, selectedCell]
     }));
   };
 
@@ -148,7 +144,7 @@ const App = () => {
     if (!state.isPlayerTurn) {
       const timer = setTimeout(() => {
         handleComputerMove();
-      }); 
+      },); 
 
       return () => clearTimeout(timer);
     }
@@ -190,18 +186,18 @@ const App = () => {
                   } else {
                     cellClass = "ship";
                   }
-                } else if (
+                }
+                if (
                   state.selectedCells.some(
                     (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
                   )
                 ) {
-                  cellClass = "miss";
+                  cellClass;
                 }
                 return (
                   <div
                     key={`${rowIndex}-${colIndex}`}
                     className={`cell ${cellClass}`}
-                    onClick={() => handleCellClick(rowIndex, colIndex)}
                   />
                 );
               })
@@ -219,6 +215,15 @@ const App = () => {
                     cellClass = "hit";
                   } else {
                     cellClass = "ship";
+                  }
+                } else {
+                  if (
+                    state.selectedCells.some(
+                      (selectedCell) =>
+                        selectedCell.row === rowIndex && selectedCell.col === colIndex
+                    )
+                  ) {
+                    cellClass; 
                   }
                 }
                 return (
