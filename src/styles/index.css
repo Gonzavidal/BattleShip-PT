@@ -52,7 +52,11 @@ h3 {
   background-color: blue;
 }
 
-.clicked {
+.cell.empty-cell {
+  background-color: blue; 
+}
+
+.cell.clicked {
   background-color: blue; 
 }
 

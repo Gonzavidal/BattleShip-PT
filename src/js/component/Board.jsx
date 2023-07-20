@@ -5,18 +5,19 @@ const BOARD_SIZE = 10;
 
 const initialState = {
   playerBoard: Array.from({ length: BOARD_SIZE }, () =>
-    Array.from({ length: BOARD_SIZE }, () => null)
+    Array.from({ length: BOARD_SIZE }, () => "")
   ),
   computerBoard: Array.from({ length: BOARD_SIZE }, () =>
-    Array.from({ length: BOARD_SIZE }, () => null)
+    Array.from({ length: BOARD_SIZE }, () => "")
   ),
-  selectedCells: [], 
+  selectedCells: [],
+  selectedEmptyCells: [],
   isGameOver: false,
   winner: null,
   isPlayerTurn: true
 };
 
-const shipTypes = [
+const shipTypes = [ // Composición barcos
   { name: "Carrier", size: 5 },
   { name: "Battleship", size: 4 },
   { name: "Cruiser", size: 3 },
@@ -86,14 +87,14 @@ const App = () => {
         computerBoard: updatedBoard,
         isGameOver,
         winner: isGameOver ? "Player" : null,
-        isPlayerTurn: false 
+        isPlayerTurn: false
       }));
     } else {
       const selectedCell = { row, col };
       setState((prevState) => ({
         ...prevState,
         selectedCells: [...prevState.selectedCells, selectedCell],
-        isPlayerTurn: false 
+        isPlayerTurn: false
       }));
     }
   };
@@ -128,7 +129,7 @@ const App = () => {
       playerBoard: updatedPlayerBoard,
       isGameOver,
       winner: isGameOver ? "Computer" : null,
-      isPlayerTurn: true 
+      isPlayerTurn: true
     }));
   };
 
@@ -144,15 +145,21 @@ const App = () => {
     if (!state.isPlayerTurn) {
       const timer = setTimeout(() => {
         handleComputerMove();
-      },); 
+      });
 
       return () => clearTimeout(timer);
+    } else {
+      setState((prevState) => ({
+        ...prevState,
+        selectedEmptyCells: []
+      }));
     }
   }, [state.isPlayerTurn]);
 
   const handleCellClick = (row, col) => {
     if (state.isPlayerTurn) {
-      if (state.computerBoard[row][col] !== null && !state.computerBoard[row][col].hit) {
+      const clickedCell = state.computerBoard[row][col];
+      if (clickedCell === null || (clickedCell !== null && !clickedCell.hit)) {
         handleMove(row, col, state.computerBoard);
       } else {
         const selectedCell = { row, col };
@@ -161,11 +168,24 @@ const App = () => {
           selectedCells: [...prevState.selectedCells, selectedCell]
         }));
       }
+
+      const isEmptyCell = clickedCell === null;
+      const isSelectedEmptyCell = state.selectedEmptyCells.some(
+        (selectedCell) => selectedCell.row === row && selectedCell.col === col
+      );
+
+      if (isEmptyCell && !isSelectedEmptyCell) {
+        const selectedEmptyCell = { row, col };
+        setState((prevState) => ({
+          ...prevState,
+          selectedEmptyCells: [...prevState.selectedEmptyCells, selectedEmptyCell]
+        }));
+      }
     }
   };
 
   return (
-    <div className="container">
+    <div className="container">  
       <h1>Battleship</h1>
       {state.isGameOver && (
         <div className="message">
@@ -173,33 +193,37 @@ const App = () => {
           {state.winner === "Computer" && <h2>Game Over! Computer won!</h2>}
         </div>
       )}
-      <div className="game">
-        <div className="player-board">
-          <h3>Player</h3>
+      
+      <div className="game"> 
+        <div className="player-board"> 
+          <h3>Player</h3> 
           <div className="board">
-            {state.playerBoard.map((row, rowIndex) =>
+            {state.playerBoard.map((row, rowIndex) => // Tablero player
               row.map((cell, colIndex) => {
                 let cellClass = "";
-                if (cell !== null) {
-                  if (cell.hit) {
-                    cellClass = "hit";
-                  } else {
-                    cellClass = "ship";
-                  }
-                }
-                if (
-                  state.selectedCells.some(
-                    (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
-                  )
-                ) {
-                  cellClass;
-                }
-                return (
-                  <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className={`cell ${cellClass}`}
-                  />
-                );
+                        if (cell !== "") {
+                          cellClass = cell.hit ? "hit" : "ship";
+                        }
+                        if (
+                          state.selectedCells.some(
+                            (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
+                          )
+                        ) {
+                          cellClass = "miss";
+                        }
+                        if (
+                          state.selectedEmptyCells.some(
+                            (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
+                          )
+                        ) {
+                          cellClass = "empty-cell";
+                        }
+                        return (
+                          <div
+                            key={`${rowIndex}-${colIndex}`}
+                            className={`cell ${cellClass}`}
+                          />
+                        );
               })
             )}
           </div>
@@ -207,25 +231,17 @@ const App = () => {
         <div className="computer-board">
           <h3>CPU</h3>
           <div className="board">
-            {state.computerBoard.map((row, rowIndex) =>
+            {state.computerBoard.map((row, rowIndex) => // Tablero CPU
               row.map((cell, colIndex) => {
                 let cellClass = "";
                 if (cell !== null) {
-                  if (cell.hit) {
-                    cellClass = "hit";
-                  } else {
-                    cellClass = "ship";
-                  }
-                } else {
-                  if (
-                    state.selectedCells.some(
-                      (selectedCell) =>
-                        selectedCell.row === rowIndex && selectedCell.col === colIndex
-                    )
-                  ) {
-                    cellClass; 
-                  }
+                  cellClass = cell.hit ? "hit" : "ship";
+                } else if (state.selectedCells.some(
+                  (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
+                )) {
+                  cellClass = "miss";
                 }
+
                 return (
                   <div
                     key={`${rowIndex}-${colIndex}`}
@@ -238,7 +254,6 @@ const App = () => {
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
