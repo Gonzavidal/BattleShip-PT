@@ -18,7 +18,13 @@ h1 {
   justify-content: space-between;
 }
 
-.board {
+.cpu {
+  display: grid;
+  grid-template-columns: repeat(10, 40px);
+  grid-template-rows: repeat(10, 40px);
+}
+
+.player {
   display: grid;
   grid-template-columns: repeat(10, 40px);
   grid-template-rows: repeat(10, 40px);
@@ -53,7 +59,16 @@ h3 {
 }
 
 .cell.empty-cell {
-  background-color: blue; 
+  background-color: blue; /* Cambiar aquí el color azul que desees */
+}
+
+
+.cell.player-miss {
+  background-color: blue; /* Nuevo color azul para las celdas vacías alcanzadas por el jugador */
+}
+
+.cell.computer-miss {
+  background-color: blue; /* Nuevo color azul para las celdas vacías alcanzadas por el jugador */
 }
 
 .cell.clicked {
@@ -62,6 +77,10 @@ h3 {
 
 .cell:hover {
   opacity: 50%; 
+}
+
+.board .cell.empty-cell {
+  background-color: blue; /* Cambiar aquí el color azul que desees */
 }
 
 footer {
