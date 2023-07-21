@@ -1,4 +1,4 @@
-html {
+body {
   background-color: lightskyblue;
 }
 
@@ -18,12 +18,7 @@ h1 {
   justify-content: space-between;
 }
 
-.cpu {
-  display: grid;
-  grid-template-columns: repeat(10, 40px);
-  grid-template-rows: repeat(10, 40px);
-}
-
+.cpu,
 .player {
   display: grid;
   grid-template-columns: repeat(10, 40px);
@@ -58,33 +53,15 @@ h3 {
   background-color: blue;
 }
 
-.cell.empty-cell {
-  background-color: blue; /* Cambiar aquí el color azul que desees */
-}
-
-
-.cell.player-miss {
-  background-color: blue; /* Nuevo color azul para las celdas vacías alcanzadas por el jugador */
-}
-
 .cell.computer-miss {
-  background-color: blue; /* Nuevo color azul para las celdas vacías alcanzadas por el jugador */
-}
-
-.cell.clicked {
-  background-color: blue; 
+  background-color: #64b5f6; /* Azul claro */
 }
 
 .cell:hover {
-  opacity: 50%; 
-}
-
-.board .cell.empty-cell {
-  background-color: blue; /* Cambiar aquí el color azul que desees */
+  opacity: 50%;
 }
 
 footer {
-  background-color: lightskyblue;
   color: black;
   padding: 10px;
   text-align: center;

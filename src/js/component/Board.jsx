@@ -11,7 +11,7 @@ const initialState = {
     Array.from({ length: BOARD_SIZE }, () => null)
   ),
   selectedCellsPlayer: [], // Agregar selectedCellsPlayer
-  selectedEmptyCellsPlayer: [], // Agregar selectedEmptyCellsPlayer
+  selectedEmptyCellsComputer: [], // Agregar selectedEmptyCellsComputer
   selectedCellsComputer: [], // Agregar selectedCellsComputer
   selectedEmptyCellsComputer: [], // Agregar selectedEmptyCellsComputer
   isGameOver: false,
@@ -161,16 +161,16 @@ const Board = () => {
     if (state.isPlayerTurn) {
       const clickedCell = state.computerBoard[row][col];
       const isEmptyCell = clickedCell === null;
-
+  
       if (isEmptyCell) {
         const isSelectedEmptyCell = state.selectedEmptyCellsComputer.some(
           (selectedCell) => selectedCell.row === row && selectedCell.col === col
         );
-
+  
         if (!isSelectedEmptyCell) {
           const updatedBoard = state.computerBoard.map((row) => [...row]);
           updatedBoard[row][col] = { miss: true };
-
+  
           setState((prevState) => ({
             ...prevState,
             computerBoard: updatedBoard,
@@ -214,7 +214,7 @@ const Board = () => {
                 ) {
                   cellClass = "computer-miss";
                 } else if (
-                  state.selectedEmptyCellsPlayer.some(
+                  state.selectedEmptyCellsComputer.some(
                     (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
                   )
                 ) {
@@ -236,6 +236,7 @@ const Board = () => {
           <div className="cpu">
             {state.computerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
+                
                 let cellClass = "";
                 if (cell !== null) {
                   cellClass = cell.hit ? "hit" : "ship";
