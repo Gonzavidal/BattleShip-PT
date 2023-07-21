@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../../styles/index.css";
 
-const BOARD_SIZE = 10;
+const BOARD_SIZE = 10;  // Disposición de tablero
 
 const initialState = {
   playerBoard: Array.from({ length: BOARD_SIZE }, () =>
@@ -17,7 +17,7 @@ const initialState = {
   isPlayerTurn: true
 };
 
-const shipTypes = [
+const shipTypes = [  // Tipos de barcos y su longitud
   { name: "Carrier", size: 5 },
   { name: "Battleship", size: 4 },
   { name: "Cruiser", size: 3 },
@@ -67,7 +67,7 @@ const App = () => {
     return updatedBoard;
   };
 
-  const handleMove = (row, col, board) => {
+  const handleMove = (row, col, board) => {  // Disparos Player
     if (state.isGameOver || board[row][col].hit) {
       return;
     }
@@ -99,7 +99,7 @@ const App = () => {
     }
   };
 
-  const handleComputerMove = () => {
+  const handleComputerMove = () => { // Disparos CPU
     if (state.isGameOver || state.isPlayerTurn) {
       return;
     }
@@ -156,7 +156,7 @@ const App = () => {
     }
   }, [state.isPlayerTurn]);
 
-  const handleCellClick = (row, col) => {
+  const handleCellClick = (row, col) => {  // Función disparo celdas
     if (state.isPlayerTurn) {
       const clickedCell = state.computerBoard[row][col];
       if (clickedCell === null || (clickedCell !== null && !clickedCell.hit)) {
@@ -198,7 +198,7 @@ const App = () => {
         <div className="player-board"> 
           <h3>Player</h3>
           <div className="board">
-            {state.playerBoard.map((row, rowIndex) =>
+            {state.playerBoard.map((row, rowIndex) => // Tablero jugador
               row.map((cell, colIndex) => {
                 let cellClass = "";
                         if (cell !== null) {
@@ -231,7 +231,7 @@ const App = () => {
         <div className="computer-board">
           <h3>CPU</h3>
           <div className="board">
-            {state.computerBoard.map((row, rowIndex) =>
+            {state.computerBoard.map((row, rowIndex) => // Tablero CPU
               row.map((cell, colIndex) => {
                 let cellClass = "";
                 if (cell !== null) {
