@@ -3,8 +3,8 @@ Battleship, proyecto de prueba técnica realizado en React.js con tecnologías d
 Instrucciones:
 
 - Intenta hundir los barcos del adversario antes que hundan los tuyos,  
-  seleccionando cuadros dentro de la grilla de 10x10.
-- Los barcos son los siguientes:
+  seleccionando celdas dentro de la grilla de 10x10.
+- Los barcos y sus dimensiones son los siguientes:
     
     - Portaavión (5 cuadros)
     - Acorazado (4 cuadros)
@@ -15,7 +15,7 @@ Instrucciones:
 
 Instrucciones de deploy
 
-- Si se utiliza Gitpod, Codespaces o alguna otra máquina virtual online, 
+- Si utilizas Gitpod, Codespaces o alguna otra máquina virtual online, 
   el juego se iniciará automáticamente abriéndose una pestaña.
 
 - En caso de abrir de manera local:

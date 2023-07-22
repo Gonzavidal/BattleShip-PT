@@ -10,17 +10,16 @@ const initialState = {
   computerBoard: Array.from({ length: BOARD_SIZE }, () =>
     Array.from({ length: BOARD_SIZE }, () => null)
   ),
-  selectedCellsPlayer: [], // Agregar selectedCellsPlayer
-  selectedEmptyCellsPlayer: [], // Agregar selectedEmptyCellsPlayer
-  selectedCellsComputer: [], // Agregar selectedCellsComputer
-  selectedEmptyCellsComputer: [], // Agregar selectedEmptyCellsComputer
+  selectedCellsPlayer: [],
+  selectedEmptyCellsPlayer: [],
+  selectedCellsComputer: [],
+  selectedEmptyCellsComputer: [],
   isGameOver: false,
   winner: null,
   isPlayerTurn: true,
 };
 
 const shipTypes = [
-  // Tipos de barcos y su longitud
   { name: "Carrier", size: 5 },
   { name: "Battleship", size: 4 },
   { name: "Cruiser", size: 3 },
@@ -70,8 +69,7 @@ const Board = () => {
     return updatedBoard;
   };
 
-  const handlePlayerMove = (row, col, board) => {
-    // Disparos Player
+  const handlePlayerMove = (row, col, board) => {  // Movimientos permitidos y manejo turnos
     if (state.isGameOver || board[row][col].hit) {
       return;
     }
@@ -104,7 +102,6 @@ const Board = () => {
   };
 
   const handleComputerMove = () => {
-    // Disparos CPU
     if (state.isGameOver || state.isPlayerTurn) {
       return;
     }
@@ -157,7 +154,6 @@ const Board = () => {
   }, [state.isPlayerTurn]);
 
   const handleCellClick = (row, col) => {
-    // Función disparo celdas
     if (state.isPlayerTurn) {
       const clickedCell = state.computerBoard[row][col];
       const isEmptyCell = clickedCell === null;
@@ -188,9 +184,9 @@ const Board = () => {
   };
 
   return (
-    <div className="container">   
-      <h1>Battleship</h1> 
-      {state.isGameOver && (    // Condicional de ganador: Player o CPU
+    <div className="container">
+      <h1>Battleship</h1>
+      {state.isGameOver && (
         <div className="message">
           {state.winner === "Player" && <h2>Congratulations! You won!</h2>}
           {state.winner === "Computer" && <h2>Game Over! Computer won!</h2>}
@@ -234,11 +230,10 @@ const Board = () => {
         <div className="computer-board">
           <h3>CPU</h3>
           <div className="cpu">
-
             {state.computerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
-
                 let cellClass = "";
+
                 if (cell !== null) {
                   cellClass = cell.hit ? "hit" : "ship";
                 } else if (
@@ -263,8 +258,6 @@ const Board = () => {
                   />
                 );
               })
-
-              
             )}
           </div>
         </div>
