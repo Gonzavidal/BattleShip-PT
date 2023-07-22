@@ -188,9 +188,9 @@ const Board = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Battleship</h1>
-      {state.isGameOver && (
+    <div className="container">   
+      <h1>Battleship</h1> 
+      {state.isGameOver && (    // Condicional de ganador: Player o CPU
         <div className="message">
           {state.winner === "Player" && <h2>Congratulations! You won!</h2>}
           {state.winner === "Computer" && <h2>Game Over! Computer won!</h2>}
@@ -234,9 +234,10 @@ const Board = () => {
         <div className="computer-board">
           <h3>CPU</h3>
           <div className="cpu">
+
             {state.computerBoard.map((row, rowIndex) =>
               row.map((cell, colIndex) => {
-                
+
                 let cellClass = "";
                 if (cell !== null) {
                   cellClass = cell.hit ? "hit" : "ship";
@@ -262,6 +263,8 @@ const Board = () => {
                   />
                 );
               })
+
+              
             )}
           </div>
         </div>
