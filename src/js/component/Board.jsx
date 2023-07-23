@@ -79,10 +79,16 @@ const Board = () => {
 
     if (cell !== null) {
       cell.hit = true;
+        const quedan = updatedBoard.some((row) => {
+            console.log({miRow: row});
+            const b = row.some((cell) => !!cell && !cell.hit && !cell.miss);
+            console.log({b});
+            if(b){
+                return true;
+            }
+        });
 
-      const isGameOver = updatedBoard.every((row) =>
-        row.every((cell) => cell === null || cell.hit)
-      );
+        const isGameOver = !quedan;
 
       setState((prevState) => ({
         ...prevState,
@@ -107,6 +113,7 @@ const Board = () => {
     }
 
     const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
+    console.log({updatedPlayerBoard});
 
     let row, col;
     let isMoveValid = false;
@@ -114,17 +121,36 @@ const Board = () => {
     while (!isMoveValid) {
       row = getRandomPosition();
       col = getRandomPosition();
-      if (updatedPlayerBoard[row][col] !== null && !updatedPlayerBoard[row][col].hit) {
+      console.log({ row, col });
+
+
+        console.log("updatedPlayerBoard[row][col]", updatedPlayerBoard[row][col]);
+
+      if (updatedPlayerBoard[row][col] == null || (!!updatedPlayerBoard[row][col]) && !updatedPlayerBoard[row][col].hit && !updatedPlayerBoard[row][col].miss) {
         isMoveValid = true;
       }
     }
 
-    const cell = updatedPlayerBoard[row][col];
-    cell.hit = true;
+    let isNull = updatedPlayerBoard[row][col] === null;
+      console.log("vamos a jugar aca: ", {row, col, isNull});
 
-    const isGameOver = updatedPlayerBoard.every((row) =>
-      row.every((cell) => cell === null || cell.hit)
-    );
+      if(!isNull){
+          updatedPlayerBoard[row][col].hit = true; // Si el disparo es válido, se marca como hit
+      }
+      if (isNull){
+          updatedPlayerBoard[row][col] = { miss: true };
+      }
+
+      console.log({updatedPlayerBoard});
+
+      const quedan = updatedPlayerBoard.some((row) => {
+          const b = row.some((cell) => !!cell && !cell.hit && !cell.miss);
+          if(b){
+              return true;
+          }
+      });
+
+      const isGameOver = !quedan;
 
     setState((prevState) => ({
       ...prevState,
@@ -177,7 +203,7 @@ const Board = () => {
             ],
           }));
         }
-      } else if (!clickedCell.hit) {
+      } else if (!clickedCell.hit && !clickedCell.miss) {
         handlePlayerMove(row, col, state.computerBoard);
       }
     }
@@ -197,67 +223,85 @@ const Board = () => {
         <div className="player-board">
           <h3>Player</h3>
           <div className="player">
-            {state.playerBoard.map((row, rowIndex) =>
-              row.map((cell, colIndex) => {
-                let cellClass = "";
+            {state.playerBoard.map((row, rowIndex) => {
+              console.log({ row });
+                  return row.map((cell, colIndex) => {
+                    let cellClass = "";
 
-                if (cell !== null) {
-                  cellClass = cell.hit ? "hit" : "ship";
-                } else if (
-                  state.selectedCellsPlayer.some(
-                    (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
-                  )
-                ) {
-                  cellClass = "computer-miss";
-                } else if (
-                  state.selectedEmptyCellsPlayer.some(
-                    (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
-                  )
-                ) {
-                  cellClass = "miss"; // Usar la clase "miss" para celdas vacías
+                    if (cell !== null) {
+                      if (cell.hit) {
+                        cellClass = "hit";
+                      }
+                      if (cell.miss) {
+                        cellClass = "miss";
+                      }
+                      if (!cell.hit && !cell.miss) {
+                        cellClass = "ship";
+                      }
+                    } else if (
+                        state.selectedCellsPlayer.some(
+                            (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
+                        )
+                    ) {
+                      cellClass = "computer-miss";
+                    } else if (
+                        state.selectedEmptyCellsPlayer.some(
+                            (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
+                        )
+                    ) {
+                      cellClass = "miss"; // Usar la clase "miss" para celdas vacías
+                    }
+
+                    return (
+                        <div
+                            key={`${rowIndex}-${colIndex}`}
+                            className={`cell ${cellClass}`}
+                        />
+                    );
+                  });
                 }
-
-                return (
-                  <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className={`cell ${cellClass}`}
-                  />
-                );
-              })
             )}
           </div>
         </div>
         <div className="computer-board">
           <h3>CPU</h3>
           <div className="cpu">
-            {state.computerBoard.map((row, rowIndex) =>
-              row.map((cell, colIndex) => {
-                let cellClass = "";
+            {state.computerBoard.map((row, rowIndex) => {
+                  return row.map((cell, colIndex) => {
+                    let cellClass = "";
+                    if (cell !== null) {
+                      if(cell.hit){
+                        cellClass = "hit";
+                      }
+                      if(cell.miss){
+                        cellClass = "miss";
+                      }
+                      if(!cell.hit && !cell.miss){
+                         cellClass = "ship";
+                      }
+                    } else if (
+                        state.selectedCellsComputer.some(
+                            (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
+                        )
+                    ) {
+                      cellClass = "computer-miss";
+                    } else if (
+                        state.selectedEmptyCellsComputer.some(
+                            (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
+                        )
+                    ) {
+                      cellClass = "miss"; // Usar la clase "miss" para celdas vacías
+                    }
 
-                if (cell !== null) {
-                  cellClass = cell.hit ? "hit" : "ship";
-                } else if (
-                  state.selectedCellsComputer.some(
-                    (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
-                  )
-                ) {
-                  cellClass = "computer-miss";
-                } else if (
-                  state.selectedEmptyCellsComputer.some(
-                    (selectedCell) => selectedCell.row === rowIndex && selectedCell.col === colIndex
-                  )
-                ) {
-                  cellClass = "miss"; // Usar la clase "miss" para celdas vacías
+                    return (
+                        <div
+                            key={`${rowIndex}-${colIndex}`}
+                            className={`cell ${cellClass}`}
+                            onClick={() => handleCellClick(rowIndex, colIndex)}
+                        />
+                    );
+                  });
                 }
-
-                return (
-                  <div
-                    key={`${rowIndex}-${colIndex}`}
-                    className={`cell ${cellClass}`}
-                    onClick={() => handleCellClick(rowIndex, colIndex)}
-                  />
-                );
-              })
             )}
           </div>
         </div>
