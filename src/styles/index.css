@@ -53,10 +53,6 @@ h3 {
   background-color: blue;
 }
 
-.cell.computer-miss {
-  background-color: #64b5f6; /* Azul claro */
-}
-
 .cell:hover {
   opacity: 50%;
 }

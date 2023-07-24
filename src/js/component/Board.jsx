@@ -19,7 +19,7 @@ const initialState = {
   isPlayerTurn: true,
 };
 
-const shipTypes = [
+const shipTypes = [  // Composicion barcos
   { name: "Carrier", size: 5 },
   { name: "Battleship", size: 4 },
   { name: "Cruiser", size: 3 },
@@ -27,12 +27,12 @@ const shipTypes = [
   { name: "Destroyer", size: 2 },
 ];
 
-const getRandomPosition = () => Math.floor(Math.random() * BOARD_SIZE);
+const getRandomPosition = () => Math.floor(Math.random() * BOARD_SIZE);  // Destinación automática barcos
 
 const Board = () => {
   const [state, setState] = useState(initialState);
 
-  const placeShipsRandomly = (board) => {
+  const placeShipsRandomly = (board) => { 
     const updatedBoard = board.map((row) => [...row]);
 
     shipTypes.forEach((shipType) => {
@@ -80,9 +80,7 @@ const Board = () => {
     if (cell !== null) {
       cell.hit = true;
         const quedan = updatedBoard.some((row) => {
-            console.log({miRow: row});
             const b = row.some((cell) => !!cell && !cell.hit && !cell.miss);
-            console.log({b});
             if(b){
                 return true;
             }
@@ -107,13 +105,12 @@ const Board = () => {
     }
   };
 
-  const handleComputerMove = () => {
+  const handleComputerMove = () => { // Movimientos permitidos, manejo turnos y lógica CPU
     if (state.isGameOver || state.isPlayerTurn) {
       return;
     }
 
     const updatedPlayerBoard = state.playerBoard.map((row) => [...row]);
-    console.log({updatedPlayerBoard});
 
     let row, col;
     let isMoveValid = false;
@@ -121,10 +118,8 @@ const Board = () => {
     while (!isMoveValid) {
       row = getRandomPosition();
       col = getRandomPosition();
-      console.log({ row, col });
 
 
-        console.log("updatedPlayerBoard[row][col]", updatedPlayerBoard[row][col]);
 
       if (updatedPlayerBoard[row][col] == null || (!!updatedPlayerBoard[row][col]) && !updatedPlayerBoard[row][col].hit && !updatedPlayerBoard[row][col].miss) {
         isMoveValid = true;
@@ -132,7 +127,6 @@ const Board = () => {
     }
 
     let isNull = updatedPlayerBoard[row][col] === null;
-      console.log("vamos a jugar aca: ", {row, col, isNull});
 
       if(!isNull){
           updatedPlayerBoard[row][col].hit = true; // Si el disparo es válido, se marca como hit
@@ -141,7 +135,6 @@ const Board = () => {
           updatedPlayerBoard[row][col] = { miss: true };
       }
 
-      console.log({updatedPlayerBoard});
 
       const quedan = updatedPlayerBoard.some((row) => {
           const b = row.some((cell) => !!cell && !cell.hit && !cell.miss);
@@ -179,7 +172,7 @@ const Board = () => {
     }
   }, [state.isPlayerTurn]);
 
-  const handleCellClick = (row, col) => {
+  const handleCellClick = (row, col) => { // 
     if (state.isPlayerTurn) {
       const clickedCell = state.computerBoard[row][col];
       const isEmptyCell = clickedCell === null;
@@ -210,25 +203,24 @@ const Board = () => {
   };
 
   return (
-    <div className="container">
-      <h1>Battleship</h1>
-      {state.isGameOver && (
-        <div className="message">
+    <div className="container"> 
+      <h1>Battleship</h1> 
+      {state.isGameOver && (  // Ganador
+        <div className="message">  
           {state.winner === "Player" && <h2>Congratulations! You won!</h2>}
           {state.winner === "Computer" && <h2>Game Over! Computer won!</h2>}
         </div>
       )}
-
-      <div className="game">
+      
+      <div className="game"> 
         <div className="player-board">
           <h3>Player</h3>
           <div className="player">
             {state.playerBoard.map((row, rowIndex) => {
-              console.log({ row });
                   return row.map((cell, colIndex) => {
                     let cellClass = "";
 
-                    if (cell !== null) {
+                    if (cell !== null) { // Renderizado player y cambio de estado celdas
                       if (cell.hit) {
                         cellClass = "hit";
                       }
@@ -266,10 +258,10 @@ const Board = () => {
         <div className="computer-board">
           <h3>CPU</h3>
           <div className="cpu">
-            {state.computerBoard.map((row, rowIndex) => {
+            {state.computerBoard.map((row, rowIndex) => { 
                   return row.map((cell, colIndex) => {
                     let cellClass = "";
-                    if (cell !== null) {
+                    if (cell !== null) {  // Renderizado CPU y cambio de estado celdas
                       if(cell.hit){
                         cellClass = "hit";
                       }
@@ -277,7 +269,7 @@ const Board = () => {
                         cellClass = "miss";
                       }
                       if(!cell.hit && !cell.miss){
-                         cellClass = "ship";
+                         //cellClass = "ship";
                       }
                     } else if (
                         state.selectedCellsComputer.some(
