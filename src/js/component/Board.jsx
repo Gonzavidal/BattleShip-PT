@@ -166,7 +166,7 @@ const Board = () => {
     if (!state.isPlayerTurn) {
       const timer = setTimeout(() => {
         handleComputerMove();
-      });
+      },1000);
 
       return () => clearTimeout(timer);
     }
